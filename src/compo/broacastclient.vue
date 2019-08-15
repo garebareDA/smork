@@ -9,9 +9,9 @@
   import Peer from 'skyway-js';
 
   export default {
-    created: function(){
+    mounted: function(){
       let localStream;
-      const peer = new Peer({key:'key'});
+      const peer = new Peer({key:'841ce991-89d8-4257-b656-500ea6b055d5'});
       const _this = this
 
       peer.on('open', function(){
@@ -20,14 +20,17 @@
         room.once('open', () => {
           console.log('接続しました');
         });
-        room.on('stream', function(stream){
+
+        room.on('stream', async function(stream){
           const remoteVideos = document.getElementById('js-remote-streams');
           const newVideo = document.createElement('video');
           newVideo.srcObject = stream;
           newVideo.playsInline = true;
+          newVideo.id = "video";
+          newVideo.autoplay = true;
           newVideo.setAttribute('data-peer-id', stream.peerId);
           remoteVideos.appendChild(newVideo);
-          newVideo.play().catch(console.error);
+          console.log('stream')
         });
 
         console.log(room.name);

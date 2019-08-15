@@ -8,9 +8,9 @@
   import Peer from 'skyway-js';
 
   export default {
-    created: function(){
+    mounted: function(){
       let localStream;
-      const peer = new Peer({key:'key'});
+      const peer = new Peer({key:'841ce991-89d8-4257-b656-500ea6b055d5'});
       navigator.mediaDevices.getUserMedia({video: false, audio: true})
       .then(function(stream){
         localStream = stream;
