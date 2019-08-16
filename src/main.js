@@ -2,7 +2,6 @@
 
 import Vue from 'vue';
 import Router from 'vue-router';
-import Cokkei from 'vue-cookie';
 import * as Firebase from 'firebase/app';
 
 import home from './compo/home.vue';
@@ -23,7 +22,6 @@ let firebaseConfig = {
 Firebase.initializeApp(firebaseConfig);
 
 Vue.use(Router);
-Vue.use(Cokkei);
 
 const routes = [
   {path: '/', component:home},

@@ -7,6 +7,7 @@
 
 <script>
 import auth from 'firebase';
+import cookie from 'js-cookie';
 
 export default {
   methods:{
@@ -14,15 +15,21 @@ export default {
       console.log('click')
       const provider = new auth.auth.GoogleAuthProvider();
 
-    auth.auth().signInWithPopup(provider).then(function(result) {
-        var token = result.credential.accessToken;
-        var user = result.user;
-        console.log(result)
+      auth.auth().signInWithPopup(provider).then(function(result) {
+        const token = result.credential.accessToken;
+        const user = result.user.displayName;
+        const uid = result.user.uid;
+        const alive = true;
+
+        cookie.set('user', user);
+        cookie.set('uid', uid);
+        cookie.set('alive', alive);
       }).catch(function(error) {
-        var errorCode = error.code;
-        var errorMessage = error.message;
-        var email = error.email;
-        var credential = error.credential;
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        const email = error.email;
+        const credential = error.credential;
+        alert('ログインに失敗しました、やり直してください');
       });
     },
   }
