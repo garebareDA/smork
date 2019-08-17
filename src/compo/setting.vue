@@ -1,30 +1,47 @@
 <template>
   <div>
-    <input v-model.trim="title" id="title" cols="30" rows="10" placeholder="タイトルを入力してください"></input>
+    <input v-model.trim="title" id="title" cols="30" rows="10" placeholder="タイトルを入力してください">
     <div>{{title.length}}/100</div>
     <div>最大文字数100文字</div>
-    <router-link :to="id" append>
-      <h2 class="url">配信を開始する</h2>
-    </router-link>
+    <button v-on:click="route">配信開始</button>
   </div>
 </template>
 
 <script>
-import { firestore } from 'firebase';
+import firebase from 'firebase';
+import cookie from 'js-cookie';
+
 export default {
+  beforeMount(){
+    const isAlive = cookie.get('alive');
+    console.log(typeof isAlive);
+    if(isAlive !== 'true'){
+      this.$router.replace(`/`);
+    }
+  },
 
   methods:{
-    //TODO if文を追加
     route:function(){
-      //firebase add で一意のIDで遷移
-      const firestoreId = null
-      this.$router.push(`/broadcast/start/${firestoreId}`);
+      if(this.title.length === 0){
+        this.title = 'non title'
+      }
+      const db = firebase.firestore();
+      db.collection('broadcast').add({
+        displayName: cookie.get('user'),
+        uid: cookie.get('uid'),
+        title: this.title
+      }).then(docRef => {
+        this.$router.replace(`/start/${docRef.id}`);
+      }).catch(err => {
+        alert('ログインしてください');
+        this.$router.replace(`/`);
+      });
     }
   },
 
   data() {
     return{
-      id:"",
+      title:'',
     }
   }
 }

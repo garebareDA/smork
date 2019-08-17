@@ -33,6 +33,11 @@
           console.log('stream')
         });
 
+        room.on('close', () =>{
+          const db = firebase.firestore();
+          db.collection('brodcastNow').doc(this.$route.params.id).delete();
+        });
+
         console.log(room.name);
         console.log(room.members);
 

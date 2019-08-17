@@ -26,7 +26,7 @@ Vue.use(Router);
 const routes = [
   {path: '/', component:home},
   {path: '/broadcast/setting', component:setting},
-  {path: '/broadcast/start/:id', component:broadcast},
+  {path: '/start/:id', component:broadcast},
   {path:'/radio/:id', component:radio}
 ];
 

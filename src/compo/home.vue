@@ -6,24 +6,22 @@
 </template>
 
 <script>
-import auth from 'firebase';
+import firebase from 'firebase';
 import cookie from 'js-cookie';
 
 export default {
   methods:{
     login: function(){
       console.log('click')
-      const provider = new auth.auth.GoogleAuthProvider();
+      const provider = new firebase.auth.GoogleAuthProvider();
 
-      auth.auth().signInWithPopup(provider).then(function(result) {
+      firebase.auth().signInWithPopup(provider).then(function(result) {
         const token = result.credential.accessToken;
         const user = result.user.displayName;
         const uid = result.user.uid;
-        const alive = true;
-
         cookie.set('user', user);
         cookie.set('uid', uid);
-        cookie.set('alive', alive);
+        cookie.set('alive', true)
       }).catch(function(error) {
         const errorCode = error.code;
         const errorMessage = error.message;
