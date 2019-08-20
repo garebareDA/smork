@@ -12,17 +12,28 @@
   export default {
 
     beforeMount(){
+      let uid
+      const _this = this
+      firebase.auth().onAuthStateChanged(user => {
+        if(user){
+          user.providerData.forEach(profile => {
+            uid = profile.uid;
+          });
+        }else{
+          console.log('not login');
+          _this.$router.replace('/');
+        }
+      });
+
       const db = firebase.firestore();
       const broadcast = db.collection('broadcast').doc(this.$route.params.id);
-      const _this = this
       broadcast.get().then(doc => {
-        const uid = cookie.get('uid');
-        console.log(doc.data());
-        console.log(uid);
         if(doc.data().uid !== uid){
           alert('ログインしなおしてください');
           _this.$router.replace('/');
         }
+      }).catch(() => {
+        _this.$router.replace('/');
       });
     },
 

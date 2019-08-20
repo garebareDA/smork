@@ -1,7 +1,17 @@
 <template>
   <div>
     <h1>smork</h1>
-    <h2 v-on:click="login()">login</h2>
+    <div v-if="isLogin === true">
+      <img :src="photURL">
+      <div>{{displayName}}</div>
+      <div>ログイン中</div>
+      <router-link to="/broadcast/setting">
+      <a>配信する</a>
+      </router-link>
+    </div>
+    <div v-else>
+    <a v-on:click="login()">ログイン</a>
+    </div>
   </div>
 </template>
 
@@ -10,18 +20,44 @@ import firebase from 'firebase';
 import cookie from 'js-cookie';
 
 export default {
+  created() {
+    const _this = this
+    firebase.auth().onAuthStateChanged(user => {
+      if(user){
+          user.providerData.forEach(profile => {
+            const displayName = profile.displayName;
+            const uid = profile.uid;
+            const photoURL = profile.photoURL;
+            _this.displayName = displayName;
+            _this.isLogin = true;
+            _this.photURL = photoURL
+          });
+      }else{
+        console.log('not login');
+      }
+    });
+
+    const db = firebase.firestore();
+    db.collection("broadcast").onSnapshot(snapshot =>{
+      snapshot.forEach(doc => {
+        console.log(doc.id);
+        console.log(doc.data());
+      });
+    });
+  },
+
   methods:{
-    login: function(){
+    login(){
       console.log('click')
       const provider = new firebase.auth.GoogleAuthProvider();
-
+      const _this = this
       firebase.auth().signInWithPopup(provider).then(function(result) {
-        const token = result.credential.accessToken;
         const user = result.user.displayName;
-        const uid = result.user.uid;
-        cookie.set('user', user);
-        cookie.set('uid', uid);
-        cookie.set('alive', true)
+        const photURL = result.user.photoURL;
+
+        _this.isLogin = true;
+        _this.displayName = user;
+        _this.photURL = photURL;
       }).catch(function(error) {
         const errorCode = error.code;
         const errorMessage = error.message;
@@ -29,8 +65,15 @@ export default {
         const credential = error.credential;
         alert('ログインに失敗しました、やり直してください');
       });
-    },
-  }
-
+    }
+  },
+  data(){
+    return{
+      list:[],
+      isLogin:false,
+      displayName:String,
+      photURL:String
+    }
+  },
 }
 </script>

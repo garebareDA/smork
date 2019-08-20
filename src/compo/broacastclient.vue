@@ -7,15 +7,16 @@
 
 <script>
   import Peer from 'skyway-js';
+  let room
 
   export default {
-    mounted: function(){
+    mounted (){
       let localStream;
       const peer = new Peer({key:'841ce991-89d8-4257-b656-500ea6b055d5'});
       const _this = this
 
       peer.on('open', function(){
-        const room = peer.joinRoom(`${_this.$route.params.id}`,{mode: 'sfu', stream: localStream});
+        let room = peer.joinRoom(`${_this.$route.params.id}`,{mode: 'sfu', stream: localStream});
 
         room.once('open', () => {
           console.log('接続しました');
@@ -35,7 +36,7 @@
 
         room.on('close', () =>{
           const db = firebase.firestore();
-          db.collection('brodcastNow').doc(this.$route.params.id).delete();
+          db.collection('brodcast').doc(this.$route.params.id).delete();
         });
 
         console.log(room.name);
@@ -46,7 +47,7 @@
 
     methods:{
       close:function(){
-        peer.close();
+        
       },
     }
   }
