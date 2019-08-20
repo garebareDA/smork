@@ -7,7 +7,6 @@
 
 <script>
   import Peer from 'skyway-js';
-  let room
 
   export default {
     mounted (){
