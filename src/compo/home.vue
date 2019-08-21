@@ -17,7 +17,6 @@
 
 <script>
 import firebase from 'firebase';
-import cookie from 'js-cookie';
 
 export default {
   created() {

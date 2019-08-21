@@ -7,15 +7,22 @@
 
 <script>
   import Peer from 'skyway-js';
+  let room
 
   export default {
+    beforeRouteLeave (to, from, next){
+      this.close();
+      next();
+    },
+
     mounted (){
       let localStream;
       const peer = new Peer({key:'841ce991-89d8-4257-b656-500ea6b055d5'});
       const _this = this
 
       peer.on('open', function(){
-        let room = peer.joinRoom(`${_this.$route.params.id}`,{mode: 'sfu', stream: localStream});
+        room = peer.joinRoom(`${_this.$route.params.id}`,{mode: 'sfu', stream: localStream});
+        let hostPeer
 
         room.once('open', () => {
           console.log('接続しました');
@@ -38,6 +45,17 @@
           db.collection('brodcast').doc(this.$route.params.id).delete();
         });
 
+        room.on('data', ({src, data}) =>{
+          hostPeer = src
+        });
+
+        room.on('peerLeave', (peerId) => {
+          if(hostPeer === peerId){
+            this.close();
+            alert('配信が終了しました');
+          }
+        });
+
         console.log(room.name);
         console.log(room.members);
 
@@ -46,7 +64,7 @@
 
     methods:{
       close:function(){
-        
+        room.close();
       },
     }
   }

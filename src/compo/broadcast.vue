@@ -7,9 +7,13 @@
 <script>
   import Peer from 'skyway-js';
   import firebase from 'firebase';
-  import cookie from 'js-cookie';
-
+  let room
   export default {
+
+    beforeRouteLeave (to, from, next){
+      this.close();
+      next();
+    },
 
     beforeMount(){
       let uid
@@ -47,31 +51,37 @@
 
       const _this = this
       peer.on('open', function(){
-        const room = peer.joinRoom(`${_this.$route.params.id}`,{mode: 'sfu', stream: localStream});
+        room = peer.joinRoom(`${_this.$route.params.id}`,{mode: 'sfu', stream: localStream});
         room.once('open', () => {
           console.log('接続しました');
         });
 
         room.on('close', () =>{
-          const db = firebase.firestore();
+          _this.close();
+        });
+
+        room.on('peerJoin',() => {
+          room.send('close');
         });
       });
     },
 
     created(){
         window.addEventListener('beforeunload', e =>{
+        room.close();
         const db = firebase.firestore();
         db.collection('broadcast').doc(`${this.$route.params.id}`).delete().then(() =>{
           console.log('delete')
         }).catch(e => {
           console.log(e);
         });
-        e.returnValue = '保存忘れはありませんか？';
+        e.returnValue = '配信を終了しました';
       }, false);
     },
 
     methods:{
       close(){
+        room.close();
         const db = firebase.firestore();
         db.collection('broadcast').doc(`${this.$route.params.id}`).delete().then(() =>{
           console.log('delete')
