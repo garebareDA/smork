@@ -1,6 +1,6 @@
 <template>
   <div>
-    <input v-model.trim="title" id="title" cols="30" rows="10" placeholder="タイトルを入力してください" />
+    <input v-model.trim="title" autofocus reqired maxlength="100" id="title" cols="30" rows="10" placeholder="タイトルを入力してください"/>
     <div>{{title.length}}/100</div>
     <div>最大文字数100文字</div>
     <button v-on:click="route">配信開始</button>
@@ -9,7 +9,6 @@
 
 <script>
 import firebase from "firebase";
-import cookie from "js-cookie";
 
 export default {
   beforeMount() {

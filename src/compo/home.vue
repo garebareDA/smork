@@ -1,25 +1,35 @@
 <template>
   <div>
-    <h1>smork</h1>
-    <div v-if="isLogin === true">
-      <img :src="photURL">
-      <div>{{displayName}}</div>
-      <div>ログイン中</div>
-      <router-link to="/broadcast/setting">
-      <a>配信する</a>
-      </router-link>
+    <div class="hedder">
+      <h1 class="title">smork</h1>
+      <div v-if="isLogin === true">
+        <img :src="photURL" class="icon">
+        <div class="displayName">{{displayName}}</div>
+        <div class="isLogin">ログイン中</div>
+        <router-link to="/setting">
+        <a class="start">配信する</a>
+        </router-link>
+      </div>
+      <div v-else>
+        <a class="login" v-on:click="login()">ログイン</a>
+      </div>
     </div>
-    <div v-else>
-    <a v-on:click="login()">ログイン</a>
+    <div v-for="(item, index) in list" v-bind:key="index">
+      <img :src="item.photURL" class="broadcastIcon">
+      <router-link :to="'/radio/' + item.id">
+        <a class="url">{{item.title}}</a>
+      </router-link>
+      <div>{{item.displayName}}</div>
     </div>
   </div>
 </template>
 
 <script>
 import firebase from 'firebase';
+import Peer from 'skyway-js';
 
 export default {
-  created() {
+  mounted() {
     const _this = this
     firebase.auth().onAuthStateChanged(user => {
       if(user){
@@ -40,7 +50,16 @@ export default {
     db.collection("broadcast").onSnapshot(snapshot =>{
       snapshot.forEach(doc => {
         console.log(doc.id);
-        console.log(doc.data());
+        console.log(doc.data().title);
+
+        const docObj = {
+          'id':doc.id,
+          'title':doc.data().title,
+          'displayName':doc.data().displayName,
+          'photURL':doc.data().photoURL,
+        }
+
+        _this.list.push(docObj);
       });
     });
   },

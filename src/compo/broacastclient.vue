@@ -7,9 +7,11 @@
 
 <script>
   import Peer from 'skyway-js';
+  import firebase from 'firebase';
   let room
 
   export default {
+
     beforeRouteLeave (to, from, next){
       this.close();
       next();
@@ -17,7 +19,7 @@
 
     mounted (){
       let localStream;
-      const peer = new Peer({key:'841ce991-89d8-4257-b656-500ea6b055d5'});
+      const peer = new Peer({key:'841ce991-89d8-4257-b656-500ea6b055d5', debug:3});
       const _this = this
 
       peer.on('open', function(){
@@ -33,7 +35,7 @@
           const newVideo = document.createElement('video');
           newVideo.srcObject = stream;
           newVideo.playsInline = true;
-          newVideo.id = "video";
+          newVideo.class = "video";
           newVideo.autoplay = true;
           newVideo.setAttribute('data-peer-id', stream.peerId);
           remoteVideos.appendChild(newVideo);
@@ -63,8 +65,9 @@
     },
 
     methods:{
-      close:function(){
+      close(){
         room.close();
+        console.log('close');
       },
     }
   }

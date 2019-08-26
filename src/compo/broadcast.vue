@@ -8,8 +8,8 @@
   import Peer from 'skyway-js';
   import firebase from 'firebase';
   let room
-  export default {
 
+  export default {
     beforeRouteLeave (to, from, next){
       this.close();
       next();
