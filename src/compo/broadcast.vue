@@ -16,16 +16,7 @@
 
   export default {
     beforeRouteLeave (to, from, next){
-      const _this = this;
-      const db = firebase.firestore();
-      const broadcast = db.collection('broadcast').doc(this.$route.params.id);
-      broadcast.get().then(doc => {
-        _this.photoURL = doc.data().photoURL
-        _this.title = doc.data().title
-        _this.displayName = doc.data().displayName
-      }).catch(() => {
-        _this.$router.replace('/');
-      });
+      this.closed();
       next();
     },
 
@@ -115,6 +106,16 @@
           console.log(e);
         });
         this.$router.replace('/');
+      },
+
+      closed(){
+        room.close();
+        const db = firebase.firestore();
+        db.collection('broadcast').doc(`${this.$route.params.id}`).delete().then(() =>{
+          console.log('delete')
+        }).catch(e => {
+          console.log(e);
+        });
       },
     },
 

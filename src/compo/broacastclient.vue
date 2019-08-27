@@ -12,7 +12,6 @@
 <script>
   import Peer from 'skyway-js';
   import firebase from 'firebase';
-  let room
 
   export default {
     mounted (){
@@ -21,7 +20,7 @@
       const _this = this
 
       peer.on('open', function(){
-        room = peer.joinRoom(`${_this.$route.params.id}`,{mode: 'sfu', stream: localStream});
+        const room = peer.joinRoom(_this.$route.params.id, {mode: 'sfu', stream: localStream});
         let hostPeer
 
         room.once('open', () => {
@@ -42,17 +41,19 @@
 
         room.on('close', () =>{
           const db = firebase.firestore();
-          db.collection('brodcast').doc(this.$route.params.id).delete();
+          db.collection('brodcast').doc(_this.$route.params.id).delete();
         });
 
         room.on('data', ({src, data}) =>{
           hostPeer = src
+          console.log(hostPeer)
         });
 
         room.on('peerLeave', (peerId) => {
           if(hostPeer === peerId){
             room.close();
             alert('配信が終了しました');
+            _this.$router.replace('/');
           }
         });
       });
