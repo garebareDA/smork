@@ -1,6 +1,10 @@
 <template>
   <div>
-    <h1 v-on:click="close">終了</h1>
+    <div class="hostIcon">
+      <img :src="photoURL">
+      <h2>{{title}}</h2>
+      <h3>{{displayName}}</h3>
+    </div>
     <div class="remote-streams" id="js-remote-streams"></div>
   </div>
 </template>
@@ -11,12 +15,6 @@
   let room
 
   export default {
-
-    beforeRouteLeave (to, from, next){
-      this.close();
-      next();
-    },
-
     mounted (){
       let localStream;
       const peer = new Peer({key:'841ce991-89d8-4257-b656-500ea6b055d5', debug:3});
@@ -53,22 +51,32 @@
 
         room.on('peerLeave', (peerId) => {
           if(hostPeer === peerId){
-            this.close();
+            room.close();
             alert('配信が終了しました');
           }
         });
-
-        console.log(room.name);
-        console.log(room.members);
-
       });
     },
 
-    methods:{
-      close(){
-        room.close();
-        console.log('close');
-      },
-    }
+    created(){
+      const _this = this;
+      const db = firebase.firestore();
+      const broadcast = db.collection('broadcast').doc(this.$route.params.id);
+      broadcast.get().then(doc => {
+        _this.photoURL = doc.data().photoURL
+        _this.title = doc.data().title
+        _this.displayName = doc.data().displayName
+      }).catch(() => {
+        _this.$router.replace('/');
+      });
+    },
+
+    data(){
+      return{
+        photoURL:String,
+        title: String,
+        displayName: String
+      }
+    },
   }
 </script>

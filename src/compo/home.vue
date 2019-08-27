@@ -1,23 +1,24 @@
 <template>
   <div>
-    <div class="hedder">
-      <h1 class="title">smork</h1>
-      <div v-if="isLogin === true">
+    <div class="header">
+      <span class="title">smork</span>
+      <span v-if="isLogin === true" class="user">
         <img :src="photURL" class="icon">
         <div class="displayName">{{displayName}}</div>
-        <div class="isLogin">ログイン中</div>
         <router-link to="/setting">
-        <a class="start">配信する</a>
+          <a class="start">配信する</a>
         </router-link>
-      </div>
+      </span>
       <div v-else>
         <a class="login" v-on:click="login()">ログイン</a>
       </div>
     </div>
-    <div v-for="(item, index) in list" v-bind:key="index">
+    <div v-for="(item, index) in list" v-bind:key="index" class="broadcasat">
       <img :src="item.photURL" class="broadcastIcon">
       <router-link :to="'/radio/' + item.id">
-        <a class="url">{{item.title}}</a>
+        <div>
+          <a class="url">{{item.title}}</a>
+        </div>
       </router-link>
       <div>{{item.displayName}}</div>
     </div>
@@ -48,6 +49,7 @@ export default {
 
     const db = firebase.firestore();
     db.collection("broadcast").onSnapshot(snapshot =>{
+      _this.list = [];
       snapshot.forEach(doc => {
         console.log(doc.id);
         console.log(doc.data().title);

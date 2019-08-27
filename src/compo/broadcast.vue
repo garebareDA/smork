@@ -1,6 +1,11 @@
 <template>
   <div>
-    <h1 v-on:click="close()">終了</h1>
+      <div class="hostIcon">
+      <img :src="photoURL">
+      <h2>{{title}}</h2>
+      <h3>{{displayName}}</h3>
+      <button v-on:click="close()">終了</button>
+    </div>
   </div>
 </template>
 
@@ -11,7 +16,16 @@
 
   export default {
     beforeRouteLeave (to, from, next){
-      this.close();
+      const _this = this;
+      const db = firebase.firestore();
+      const broadcast = db.collection('broadcast').doc(this.$route.params.id);
+      broadcast.get().then(doc => {
+        _this.photoURL = doc.data().photoURL
+        _this.title = doc.data().title
+        _this.displayName = doc.data().displayName
+      }).catch(() => {
+        _this.$router.replace('/');
+      });
       next();
     },
 
@@ -54,6 +68,7 @@
         room = peer.joinRoom(`${_this.$route.params.id}`,{mode: 'sfu', stream: localStream});
         room.once('open', () => {
           console.log('接続しました');
+          room.send('close');
         });
 
         room.on('close', () =>{
@@ -77,6 +92,17 @@
         });
         e.returnValue = '配信を終了しました';
       }, false);
+
+      const _this = this;
+      const db = firebase.firestore();
+      const broadcast = db.collection('broadcast').doc(this.$route.params.id);
+      broadcast.get().then(doc => {
+        _this.photoURL = doc.data().photoURL
+        _this.title = doc.data().title
+        _this.displayName = doc.data().displayName
+      }).catch(() => {
+        _this.$router.replace('/');
+      });
     },
 
     methods:{
@@ -88,7 +114,16 @@
         }).catch(e => {
           console.log(e);
         });
+        this.$router.replace('/');
       },
+    },
+
+    data(){
+      return{
+        photoURL:String,
+        title: String,
+        displayName: String
+      }
     }
   }
 </script>
