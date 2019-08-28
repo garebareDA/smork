@@ -1,17 +1,19 @@
 <template>
   <div>
       <div class="hostIcon">
-      <img :src="photoURL">
-      <h2>{{title}}</h2>
-      <h3>{{displayName}}</h3>
-      <button v-on:click="close()">終了</button>
-    </div>
+        <img :src="photoURL">
+        <h2>{{title}}</h2>
+        <h3>{{displayName}}</h3>
+        <button v-on:click="close()" class="finish">終了</button>
+        <div class="rythm-bass box"></div>
+      </div>
   </div>
 </template>
 
 <script>
   import Peer from 'skyway-js';
   import firebase from 'firebase';
+  import Rythm from 'rythm.js';
   let room
 
   export default {
@@ -53,6 +55,10 @@
       .then(function(stream){
         localStream = stream;
       });
+
+      const rythm = new Rythm();
+      rythm.plugMicrophone();
+      rythm.start();
 
       const _this = this
       peer.on('open', function(){

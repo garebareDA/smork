@@ -12,6 +12,7 @@
 <script>
   import Peer from 'skyway-js';
   import firebase from 'firebase';
+  import Rythm from 'rythm.js';
 
   export default {
     mounted (){
@@ -29,13 +30,18 @@
 
         room.on('stream', async function(stream){
           const remoteVideos = document.getElementById('js-remote-streams');
-          const newVideo = document.createElement('video');
+          const newVideo = document.createElement('audio');
+
           newVideo.srcObject = stream;
           newVideo.playsInline = true;
           newVideo.class = "video";
           newVideo.autoplay = true;
           newVideo.setAttribute('data-peer-id', stream.peerId);
           remoteVideos.appendChild(newVideo);
+
+          const rythm = new Rythm();
+          rythm.connectExternalAudioElement(newVideo);
+          rythm.start();
           console.log('stream')
         });
 

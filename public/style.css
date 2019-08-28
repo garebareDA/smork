@@ -32,3 +32,14 @@
 .hostIcon{
   text-align: center;
 }
+
+.box{
+  width: 100px;
+  height: 100px;
+  background-color: slategray;
+  margin: auto;
+}
+
+.finish{
+  margin-bottom:5%;
+}
