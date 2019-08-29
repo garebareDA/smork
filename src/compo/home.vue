@@ -9,9 +9,9 @@
           <a class="start">配信する</a>
         </router-link>
       </span>
-      <div v-else>
-        <a class="login" v-on:click="login()">ログイン</a>
-      </div>
+      <span v-else>
+        <button class="user" v-on:click="login()">ログイン</button>
+      </span>
     </div>
     <div v-for="(item, index) in list" v-bind:key="index" class="broadcasat">
       <img :src="item.photURL" class="broadcastIcon">
